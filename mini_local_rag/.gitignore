@@ -1,3 +1,5 @@
+#配置文件
+config.json
 # Logs
 logs/*.log
 # Python cache
@@ -6,3 +8,10 @@ _pycache_/
 *.pyd
 # System files
 .DS_Store
+# 虚拟环境
+rag_env/
+venv/
+env/
+.venv/
+.env
+.vscode/

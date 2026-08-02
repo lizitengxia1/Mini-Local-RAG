@@ -1,0 +1,16 @@
+测试文档：RAG项目开发踩坑记录
+1. 向量模型下载失败解决方案
+sentence-transformers模型首次运行会自动联网下载，WSL网络不佳会卡住程序。
+临时方案：本地手动下载模型缓存，设置local_files_only=True离线加载；开发阶段可暂时注释向量引擎测试逻辑。
+
+2. chunk分片source字段校验问题
+遍历chunk列表时，错误写法if "source" in chunk_list只会判断字符串是否是列表元素；
+正确逻辑：循环遍历每个chunk字典，单独判断if "source" in chunk，缺失字段抛出解析异常。
+
+3. 导入路径报错解决
+项目运行提示ModuleNotFoundError: No module named 'utils'，原因是运行时Python搜索路径不含项目根目录；
+解决方案：main.py顶部通过pathlib获取项目根目录，添加至sys.path，同时utils文件夹新建空__init__.py标识为Python包。
+
+4. 单元测试mock打桩作用
+test_llm_client.py使用patch拦截requests.post，不发起真实网络请求，无需消耗API调用额度，专注校验代码逻辑、异常分支。
+

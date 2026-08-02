@@ -1,0 +1,15 @@
+# LLMClient 大模型调用模块说明
+## 模块作用
+封装第三方大模型API请求，统一处理网络、参数、返回解析，隔离不同厂商接口差异。
+### 内置核心方法
+1. _build_qa_prompt：构造防幻觉约束提示词，强制模型仅使用传入知识库内容作答
+2. _send_http_request：底层requests.post网络请求，统一请求头、请求体格式
+3. _parse_model_response：解析API返回JSON，捕获字段缺失、空结果异常
+4. chat_with_rag：对外主入口，串联「检索分片-构建提示词-调用模型-提取来源文件」完整RAG链路
+
+## 参数说明
+- temperature：控制模型创造性，0.1适合知识库问答，减少编造幻觉
+- model_name：默认qwen-tiny轻量化对话模型
+## 异常分类
+LLMRequestError：网络超时、接口401/500等网络异常
+LLMRequestParseError：返回JSON缺少choices、message等关键字段
