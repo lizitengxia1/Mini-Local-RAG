@@ -56,7 +56,7 @@ class LLMClient:
         :param enable_mock: 模拟网络请求 默认开启
         :return: 接口返回原始json字典
         """
-        print(f"---------self.url:{self.url}---------\n")
+        # print(f"---------self.url:{self.url}---------\n")
         if self.enable_mock:
             print("-----测试模式：跳过网络请求，使用模拟返回值-----")
             mock_result = {

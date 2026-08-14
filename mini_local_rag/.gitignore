@@ -15,3 +15,14 @@ env/
 .venv/
 .env
 .vscode/
+vector_cache/
+cache/
+
+# 向量缓存生成的临时、校验文件
+*.npy
+tmp.*
+*.checksum.json
+
+# 本地模型大文件
+hf_model/
+

@@ -40,7 +40,31 @@ class VectorArrayEmpty(VectorEngineError):
     pass
 class MetaListEmpty(VectorEngineError):
     """入库后源数据列表异常"""
+    pass 
+# 缓存相关异常
+class CacheFileMissingError(VectorEngineError):
+    """缓存文件缺失"""
     pass
+class CacheDimensionMismatchError(VectorEngineError):
+    """缓存向量维度/Enbedding模型不匹配，缓存无法复用"""
+    pass
+class CacheDataInconsistentError(VectorEngineError):
+    """向量数量与元数据数量不一致"""
+    pass
+class CacheLockConflictError(VectorEngineError):
+    """并发锁冲突，排他锁已被占用或已达到最大并发数"""
+    pass
+class CacheCorruptedError(VectorEngineError):
+    """哈希校验失败，缓存文件静默损坏"""
+    pass
+# 内存相关
+class VectorStoreMemoryEmptyError(VectorEngineError):
+    """
+    【业务异常】向量存储内存数据集为空，不允许执行需要有效数据集的操作
+    例：内存为空时调用save_cache(业务配置禁止空快照)
+    """
+    pass
+
 # ---------------
 def init_logger() -> None:
     """Create log directory and initialize logging config"""

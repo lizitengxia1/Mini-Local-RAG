@@ -1,10 +1,15 @@
 import os
+import shutil
 import sys
+import tempfile
+import time
+
+from numpy.compat import Path
 
 # 适配导包路径，和之前test_decorators逻辑一致
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from utils.file_handler import check_file_suffix, read_text_file, scan_dir_files
+from utils.file_handler import check_file_suffix, get_file_fingerprint, read_text_file, scan_dir_files
 from utils.decorators import FileOperationError
 
 # ---------------- 测试1：后缀校验函数 check_file_suffix ----------------
@@ -83,3 +88,45 @@ def test_03_scan_directory():
     os.rmdir(temp_dir)
 
 # test_03_scan_directory()
+def setup_test_env():
+    """创建临时测试环境"""
+    temp_dir = tempfile.mkdtemp(prefix="file_handler_test_")
+    doc_dir = Path(temp_dir) / "docs"
+    cache_dir = Path(temp_dir) / "cache"
+    fingerprint_path = cache_dir / ".fingerprint"
+    doc_dir.mkdir(parents=True, exist_ok=True)
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return doc_dir, cache_dir, fingerprint_path
+
+
+def teardown_test_env(base_dir: Path):
+    """清理测试环境"""
+    if base_dir.exists():
+        shutil.rmtree(base_dir, ignore_errors=True)
+
+
+def test_01_fingerprint_generation():
+    """测试1：生成指纹 - 相同目录生成相同指纹，变化后指纹不同"""
+    doc_dir, cache_dir, fp_path = setup_test_env()
+    try:
+        # 创建文件
+        (doc_dir / "a.txt").write_text("hello")
+        (doc_dir / "b.md").write_text("world")
+        time.sleep(0.01)
+
+        fp1 = get_file_fingerprint(doc_dir)
+        fp2 = get_file_fingerprint(doc_dir)
+        assert fp1 == fp2, "相同目录指纹应一致"
+
+        # 修改文件
+        time.sleep(0.01)
+        (doc_dir / "a.txt").write_text("hello world")
+        fp3 = get_file_fingerprint(doc_dir)
+        assert fp1 != fp3, "文件变化后指纹应不同"
+
+        print("✅ test_01_fingerprint_generation 通过")
+    finally:
+        teardown_test_env(doc_dir.parent)
+
+test_01_fingerprint_generation()
+
